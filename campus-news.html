@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Campus News - The Daily Planet Newsroom. Dormitory updates, student government elections, library services, and campus life policies.">
+  <title>Campus News | The Daily Planet</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-category="campus-news">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Top Metadata Bar -->
+  <div class="top-meta-bar" role="complementary" aria-label="Issue and weather information">
+    <div class="container top-meta-inner">
+      <div class="meta-group-left">
+        <span class="today-date" aria-live="polite">Tuesday, October 27, 2026</span>
+        <span class="meta-dot">•</span>
+        <span class="issue-number">Vol. CXLII, No. 48</span>
+        <span class="meta-dot">•</span>
+        <span class="weather-badge">⛅ 68°F Campus Weather · Partly Cloudy</span>
+      </div>
+      <div class="meta-group-right">
+        <a href="saved.html" class="saved-link-btn" title="View your saved reading list">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Saved</span>
+          <span class="saved-count-badge" style="display: none;">0</span>
+        </a>
+
+        <button class="search-trigger-btn" aria-label="Open search dialog (Press /)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>Search</span>
+        </button>
+
+        <button class="theme-toggle-btn" aria-label="Switch theme mode">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-label">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Masthead -->
+  <header class="site-masthead" role="banner">
+    <div class="container">
+      <div class="masthead-crest">
+        <span class="masthead-motto">Veritas et Scientia • Planet University • Est. 1894</span>
+      </div>
+      <div class="masthead-borders">
+        <div class="masthead-title">
+          <a href="../index.html">The Daily Planet</a>
+        </div>
+        <p class="masthead-tagline">The Independent Student Voice of Planet University Newsroom</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Navbar -->
+  <nav class="sticky-navbar" role="navigation" aria-label="Main Navigation">
+    <div class="container nav-inner">
+      <ul class="desktop-nav-list">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="campus-news.html" class="active" aria-current="page">Campus News</a></li>
+        <li><a href="technology.html">Technology</a></li>
+        <li><a href="sports.html">Sports</a></li>
+        <li><a href="culture.html">Culture</a></li>
+        <li><a href="saved.html">Saved Archive</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="search-trigger-btn" aria-label="Search stories">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>Search</span>
+        </button>
+
+        <button class="mobile-nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <div class="mobile-nav-panel">
+      <ul class="mobile-nav-list">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="campus-news.html" class="active">Campus News</a></li>
+        <li><a href="technology.html">Technology</a></li>
+        <li><a href="sports.html">Sports</a></li>
+        <li><a href="culture.html">Culture</a></li>
+        <li><a href="saved.html">Saved Archive</a></li>
+      </ul>
+      <div class="mobile-panel-footer">
+        <button class="theme-toggle-btn" style="width: 100%; justify-content: center; padding: 10px;">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-label">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Banner -->
+  <header class="category-hero-banner" role="region" aria-label="Category Overview">
+    <div class="container">
+      <span class="category-banner-eyebrow">Desk Coverage</span>
+      <h1 class="category-banner-title">Campus News & Administration</h1>
+      <p class="category-banner-desc">
+        Investigating residential life, student union governance, dormitory infrastructure rollouts, dining overhaul initiatives, and campus community policies across Planet University.
+      </p>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main id="main-content" class="main-content">
+    <div class="container">
+      
+      <!-- Filter Toolbar -->
+      <div class="filter-toolbar" role="toolbar" aria-label="Filter and sort stories">
+        <div class="filter-chips-group" role="radiogroup" aria-label="Filter by Topic">
+          <button class="filter-chip category-subtopic-chip is-active" data-tag="all">All Topics</button>
+          <button class="filter-chip category-subtopic-chip" data-tag="Hostels">Hostels & Wi-Fi</button>
+          <button class="filter-chip category-subtopic-chip" data-tag="Student Union">Student Union</button>
+          <button class="filter-chip category-subtopic-chip" data-tag="Library">Library</button>
+          <button class="filter-chip category-subtopic-chip" data-tag="Dining">Campus Dining</button>
+        </div>
+
+        <div class="sort-group">
+          <label for="category-sort-select">Sort By:</label>
+          <select id="category-sort-select" class="sort-select">
+            <option value="newest">Newest First</option>
+            <option value="popular">Most Popular</option>
+            <option value="readtime">Quickest Read</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="results-count-text" id="category-results-count">Loading articles...</div>
+
+      <!-- Articles Grid -->
+      <div class="stories-grid" id="category-articles-grid">
+        <!-- Rendered dynamically by category.js -->
+      </div>
+
+      <!-- Newsletter Banner -->
+      <div class="newsletter-banner">
+        <div class="newsletter-inner">
+          <span class="newsletter-tag">Student Digest</span>
+          <h3 class="newsletter-title">Subscribe to Campus News Alerts</h3>
+          <p class="newsletter-desc">Never miss a critical administrative update or student government resolution.</p>
+          <form class="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="student@planet.edu" required aria-label="Your student email address">
+            <button type="submit" class="newsletter-submit-btn">Subscribe Free</button>
+          </form>
+          <div class="newsletter-msg" aria-live="polite"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Search Modal -->
+  <div class="search-modal-backdrop" role="dialog" aria-modal="true" aria-label="Search stories">
+    <div class="search-modal-card">
+      <div class="search-modal-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-color);">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="search-input-field" placeholder="Search stories by headline, topic, or reporter..." aria-label="Search stories">
+        <button class="search-close-btn" aria-label="Close search">&times;</button>
+      </div>
+      <div class="search-results-area" role="region" aria-live="polite">
+        <p class="search-hint">Type any keyword, title, author, or topic to search...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notice -->
+  <div class="toast-notice" role="status" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div>
+          <h3 class="footer-brand-title">The Daily Planet</h3>
+          <p class="footer-brand-desc">Planet University's independent student daily newspaper since 1894.</p>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Campus Desks</h4>
+          <ul class="footer-links-list">
+            <li><a href="campus-news.html">Campus News</a></li>
+            <li><a href="technology.html">Technology</a></li>
+            <li><a href="sports.html">Sports</a></li>
+            <li><a href="culture.html">Culture</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="../index.html">Front Page</a></li>
+            <li><a href="saved.html">Saved Archive</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Editorial Office</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            Room 304 Underwood Memorial Hall<br>
+            newsroom@dailyplanet.planet.edu
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom-bar">
+        <div>© 2026 The Daily Planet. All rights reserved.</div>
+        <div>Independent Student Journalism</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/articles-data.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/category.js"></script>
+</body>
+</html>
