@@ -1,0 +1,825 @@
+/**
+ * The Daily Planet Newsroom - Data Management & API Layer
+ * Provides robust loading from /data/articles.json with automatic
+ * embedded fallback for direct file:// browser viewing.
+ */
+
+// Embedded fallback dataset (matches /data/articles.json 1:1)
+const FALLBACK_ARTICLES = [
+  {
+    "id": "turing-hall-quantum-ai-lab",
+    "title": "State-of-the-Art Autonomous AI & Robotics Research Lab Opens in Turing Hall",
+    "subtitle": "Backed by an $8.5M endowment, the interdisciplinary facility gives undergraduate and doctoral researchers hands-on access to supercomputing clusters.",
+    "category": "Technology",
+    "categorySlug": "technology",
+    "author": {
+      "name": "Dr. Aris Vance",
+      "role": "Science & Tech Correspondent",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 27, 2026",
+    "timestamp": 1761566400000,
+    "readTime": "6 min read",
+    "views": 3820,
+    "likes": 254,
+    "featured": true,
+    "editorsPick": true,
+    "trending": true,
+    "trendingRank": 1,
+    "breaking": true,
+    "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Undergraduate researchers calibrating bipedal robotics actuators inside Turing Hall's new laboratory.",
+    "tags": ["Artificial Intelligence", "Robotics", "Turing Hall", "Research Endowment"],
+    "summary": "Planet University inaugurated its new $8.5 million Autonomous Systems & Machine Intelligence Lab in Turing Hall on Monday, marking one of the largest infrastructure upgrades in the institution's history.",
+    "content": [
+      "<p class=\"lead\">Planet University inaugurated its new $8.5 million Autonomous Systems & Machine Intelligence Lab in Turing Hall on Monday, marking one of the largest STEM infrastructure investments in the institution's history. The 14,000-square-foot facility bridges electrical engineering, computer science, and cognitive ethics, providing over 600 enrolled undergraduates with direct access to hardware previously reserved strictly for corporate labs.</p>",
+      "<p>Equipped with a dual liquid-cooled computing cluster delivering 4.2 petaflops of mixed-precision compute, eight high-precision robotic manipulation bays, and an isolated computer vision arena with full motion-capture ceiling rigs, the space was engineered from the ground up for collaborative experimentation.</p>",
+      "<blockquote>\"Too often in higher education, undergraduates are relegated to synthetic datasets and simulated software models. In this lab, freshmen will write firmware and deploy autonomous reinforcement algorithms on physical testbeds within their second semester.\"<cite>— Prof. Douglas Sterling, Department Chair of Computer Science</cite></blockquote>",
+      "<h3>Unlocking Undergraduate Discoveries</h3>",
+      "<p>Unlike conventional university research facilities where access is fiercely gatekept by senior doctoral candidates, Turing Hall's new wing operates an open-access rotation model. Supervised lab slots are allocated through an automated peer-reservation portal, with 40% of peak computing time reserved exclusively for senior capstone and independent student inquiry.</p>",
+      "<p>Initial projects already underway include an autonomous micro-quadcopter swarm designed to inspect aging bridge cables, a biomimetic prosthetic hand responsive to neuromuscular twitch sensors, and a low-latency natural language model running entirely on solar-powered microcontrollers.</p>",
+      "<h3>Ethics at the Core</h3>",
+      "<p>Crucially, the facility's charter mandates that every technical project undergo algorithmic auditing by the university's Center for Technology and Society. Faculty co-director Dr. Hedy Morales noted that engineering students will be paired with philosophy and public policy fellows before any system is piloted across campus grounds.</p>",
+      "<p>\"We aren't simply training students to benchmark faster transformer weights,\" Morales explained during the ribbon-cutting ceremony. \"We are teaching them to question who benefits from autonomous systems and how we protect human autonomy when the software leaves the bench.\" Public tours and student equipment inductions will run throughout the upcoming week.</p>"
+    ]
+  },
+  {
+    "id": "hostel-wifi-6e-upgrade",
+    "title": "Campus IT Completes High-Speed Wi-Fi 6E Rollout Across North Quad Hostels",
+    "subtitle": "After months of student petitions and connectivity deadzones, gigabit speeds arrive at dormitories just in time for mid-semester evaluations.",
+    "category": "Campus News",
+    "categorySlug": "campus-news",
+    "author": {
+      "name": "Maya Lin",
+      "role": "Senior Campus Reporter",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 26, 2026",
+    "timestamp": 1761480000000,
+    "readTime": "4 min read",
+    "views": 1420,
+    "likes": 89,
+    "featured": false,
+    "editorsPick": true,
+    "trending": true,
+    "trendingRank": 2,
+    "breaking": true,
+    "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Students studying in the newly upgraded North Quad common room with uninterrupted high-bandwidth access.",
+    "tags": ["Hostels", "Campus IT", "Infrastructure", "Student Life"],
+    "summary": "Following four months of continuous fiber pulling and access point replacements, the Office of Information Technology has finalized the campus-wide Wi-Fi 6E upgrade across North Quad residences.",
+    "content": [
+      "<p class=\"lead\">Following four months of continuous fiber pulling and access point replacements, the Office of Information Technology announced Monday morning that the Wi-Fi 6E upgrade across North Quad dormitories is officially 100% operational. The project replaces legacy 802.11ac hardware that had plagued student residents with signal throttling and packet drops since 2018.</p>",
+      "<p>Over 420 ceiling-mounted enterprise tri-band transceivers were installed across Hawthorne, Mercer, and Franklin halls. According to campus network benchmarks conducted by the student engineering society over the weekend, average download speeds have surged from 14 Mbps to 840 Mbps, with peak latency plunging below 6 milliseconds.</p>",
+      "<blockquote>\"During finals week last semester, half our hallway would lose internet whenever someone tried downloading an OS image or streaming a lecture. Yesterday evening, twelve of us held a lag-free collaborative VR design review right in the floor lounge.\"<cite>— Chloe Jensen, Junior in Architecture</cite></blockquote>",
+      "<h3>Phase Two Moves South</h3>",
+      "<p>Chief Information Officer Gregory Chen confirmed that South Quad dormitories and Greek Row will undergo identical installations during the upcoming winter recess. Chen emphasized that the upgrade also includes automated load balancing between campus subnets, preventing single-building bandwidth bottlenecks during evening peak hours.</p>",
+      "<p>Students experiencing remaining dead zones in historic stone wings are advised to log service tickets through the university portal; IT dispatch technicians have promised a same-day signal calibration turnaround.</p>"
+    ]
+  },
+  {
+    "id": "inter-college-football-championship",
+    "title": "Inter-College Football Finals: Strikers Clinch Overtime Thriller in Front of 12,000",
+    "subtitle": "Captain Marcus Cole scores a dramatic 94th-minute free-kick banger to seal Planet University's first varsity title in seven years.",
+    "category": "Sports",
+    "categorySlug": "sports",
+    "author": {
+      "name": "Leo Gallagher",
+      "role": "Varsity Sports Lead",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 26, 2026",
+    "timestamp": 1761480000000,
+    "readTime": "5 min read",
+    "views": 2940,
+    "likes": 320,
+    "featured": false,
+    "editorsPick": true,
+    "trending": true,
+    "trendingRank": 5,
+    "breaking": true,
+    "image": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Striker players erupt in celebration as the final whistle blows at Northfield Stadium.",
+    "tags": ["Football", "Varsity Strikers", "Championship", "Northfield Stadium"],
+    "summary": "In one of the most electric college finals in recent collegiate memory, Planet University defeated rivals State Tech 3-2 in an overtime showdown that had fans on their feet until the final whistle.",
+    "content": [
+      "<p class=\"lead\">Under a drenched October sky and the roar of twelve thousand screaming fans at Northfield Stadium, the Planet University Strikers clinched their first State Collegiate Championship in seven years on Sunday, overcoming fierce rival State Tech in a 3-2 overtime epic.</p>",
+      "<p>State Tech struck first in the 18th minute with a blistering counter-attack down the right flank, silencing the home crowd. However, the Strikers struck back before halftime when sophomore winger Tariq Vance slipped a curving pass through two defenders to find striker Mateo Rivera, who tapped in the equalizer off the near post.</p>",
+      "<blockquote>\"When you wear this jersey, you aren't just playing for the eleven guys on the pitch; you play for the entire student section braving the freezing rain. We refused to let them go home empty-handed.\"<cite>— Marcus Cole, Team Captain</cite></blockquote>",
+      "<h3>The 94th-Minute Decider</h3>",
+      "<p>With the score locked at 2-2 as stoppage time dwindled toward penalty shootouts, the Strikers were awarded a set piece 28 yards out following a handball on Tech's midfielder. Senior captain Marcus Cole stepped up, curled a breathtaking strike over the defensive wall into the top-right corner, sending the packed student terraces into sheer pandemonium.</p>",
+      "<p>Head Coach Donald Vance lifted the trophy alongside his senior starters at the post-game ceremony, declaring the victory a testament to four years of rigorous tactical rebuild. The squad will take a well-deserved two-week break before commencing winter pre-season drills for the upcoming National Cup qualifiers.</p>"
+    ]
+  },
+  {
+    "id": "aura-fest-annual-cultural-spectacle",
+    "title": "Annual Cultural Fest 'Aura 2026' Dazzles Campus with Three Days of Art and Music",
+    "subtitle": "Over 5,000 visitors packed the central campus quad for international food bazaars, folk dance showcases, and laser light concerts.",
+    "category": "Culture",
+    "categorySlug": "culture",
+    "author": {
+      "name": "Samira Patel",
+      "role": "Campus Life Editor",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 26, 2026",
+    "timestamp": 1761480000000,
+    "readTime": "5 min read",
+    "views": 2600,
+    "likes": 210,
+    "featured": false,
+    "editorsPick": true,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Crowds gathering at the open-air stage during the inaugural night performance of Aura 2026.",
+    "tags": ["Aura 2026", "Festival", "Live Music", "Student Life"],
+    "summary": "Planet University's marquee student festival, Aura 2026, transformed the historic University Green into a vibrant carnival of world music, street theatre, and gourmet culinary stalls.",
+    "content": [
+      "<p class=\"lead\">For seventy-two continuous hours, the stone plazas and grassy lawns of University Green shed their scholarly quiet as Aura 2026—the university's flagship cultural extravaganza—welcomed over five thousand attendees from across thirty regional universities.</p>",
+      "<p>This year's theme, 'Rhythms of Diaspora', united more than forty student-led cultural societies. Visitors strolled past the International Gastronomy Pavilion, sampling authentic street food dishes from Korean tteokbokki and Nigerian jollof rice to traditional Peruvian empanadas prepared by international student associations.</p>",
+      "<blockquote>\"Aura isn't merely an entertainment festival—it is the one weekend when every corner of our student community brings their heritage, folklore, and creative voice to center stage without boundaries.\"<cite>— Nia Kalu, Aura 2026 Organizing Convener</cite></blockquote>",
+      "<h3>Unforgettable Headliners</h3>",
+      "<p>The Saturday night concert featured neo-soul ensemble The Brass Collective alongside campus favorites Sunken Galleon, culminating in a synchronized laser visual display projected across the facade of Old Main Hall. Sunday wrapped with the traditional Inter-College Street Theatre contest, where students tackled pressing themes of environmental sustainability and mental health through powerful physical dramatics.</p>",
+      "<p>Proceeds from festival ticket merchandise will be donated to the Campus Community Pantry and local youth literacy non-profits.</p>"
+    ]
+  },
+  {
+    "id": "student-union-historic-turnout",
+    "title": "Student Union Elections Record Historic 78% Voter Turnout Amidst Housing Debate",
+    "subtitle": "Progressive Student Coalition sweeps executive council on promises of subsidized campus dining and extended library access.",
+    "category": "Campus News",
+    "categorySlug": "campus-news",
+    "author": {
+      "name": "Julian Thorne",
+      "role": "Investigative Editor",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 25, 2026",
+    "timestamp": 1761393600000,
+    "readTime": "5 min read",
+    "views": 2150,
+    "likes": 142,
+    "featured": false,
+    "editorsPick": false,
+    "trending": true,
+    "trendingRank": 4,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Ballot counting underway at the University Memorial Union late Tuesday evening.",
+    "tags": ["Student Union", "Elections", "Campus Politics", "Governance"],
+    "summary": "Surpassing previous records by over twenty percentage points, this year's Student Government election witnessed unprecedented student engagement spurred by affordable housing proposals.",
+    "content": [
+      "<p class=\"lead\">A resounding 78.4% of eligible students cast their digital and paper ballots in this semester's Student Union elections, representing the highest civic turnout in the university's 132-year history. The landmark engagement culminated in a sweep for the Progressive Student Coalition (PSC), which secured all four executive council chairs.</p>",
+      "<p>President-elect Daniel O'Reilly, a junior studying Economics and Urban Planning, centered his campaign around rent-stabilized university affiliated housing, expanding 24-hour campus study commons, and freezing meal plan pricing through 2028.</p>",
+      "<blockquote>\"Students spoke clearly this week: they are exhausted by skyrocketing off-campus lease rates and rising food overheads. Our administration will enter negotiations with the Board of Trustees with an indisputable student mandate.\"<cite>— Daniel O'Reilly, Student Union President-Elect</cite></blockquote>",
+      "<h3>High-Tech Auditing</h3>",
+      "<p>The election utilized an open-source decentralized ballot verification tool created by the university's Cryptography Club, allowing students to verify that their anonymous cryptographic token was counted without revealing their personal identity. The new executive council officially takes oath next Wednesday during the annual campus governance convocation.</p>"
+    ]
+  },
+  {
+    "id": "hackathon-disaster-response-drone",
+    "title": "48-Hour Hackathon Crowns Student Team's Thermal-Mapping Disaster Response Drone",
+    "subtitle": "Team 'Aegis Wing' engineered an autonomous drone fleet coordination protocol that locates trapped individuals through dense smoke.",
+    "category": "Technology",
+    "categorySlug": "technology",
+    "author": {
+      "name": "Maya Lin",
+      "role": "Senior Campus Reporter",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 24, 2026",
+    "timestamp": 1761307200000,
+    "readTime": "5 min read",
+    "views": 1890,
+    "likes": 178,
+    "featured": false,
+    "editorsPick": false,
+    "trending": true,
+    "trendingRank": 3,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Members of Team Aegis Wing demoing their flight telemetry dashboard before the hackathon judges.",
+    "tags": ["Hackathon", "Drones", "Emergency Response", "Computer Vision"],
+    "summary": "Out of 84 competing collegiate engineering squads at HackPlanet 2026, team Aegis Wing claimed the grand prize with their search-and-rescue autonomous mesh drone solution.",
+    "content": [
+      "<p class=\"lead\">After forty-eight caffeine-fueled hours inside the Science Atrium, team 'Aegis Wing' emerged victorious at HackPlanet 2026 on Sunday, taking home $15,000 in seed capital and incubator mentorship for their emergency disaster response drone system.</p>",
+      "<p>The team—composed of two sophomores and two juniors specializing in mechatronics and edge neural networks—developed an autonomous drone protocol capable of coordinating three micro-UAVs in dense GPS-denied environments such as burning buildings or collapsed parking structures.</p>",
+      "<blockquote>\"When first responders enter a structurally compromised building, standard radio signals bounce and drop. Our drones form an ad-hoc local mesh, relaying low-bitrate thermal imaging directly to firefighters' helmets.\"<cite>— Alicia Zhang, Hardware Lead for Aegis Wing</cite></blockquote>",
+      "<h3>Industry Judges Applaud Readiness</h3>",
+      "<p>The live demonstration impressed representatives from municipal fire departments and robotics venture funds. Rather than presenting theoretical slides, Aegis Wing deployed two prototype carbon-fiber quads inside a simulated smoke chamber, mapping hidden heat signatures in under ninety seconds.</p>",
+      "<p>The team plans to use the university incubator space at Turing Hall to pursue official FAA safety testing certification over the spring semester.</p>"
+    ]
+  },
+  {
+    "id": "fine-arts-digital-solitude-exhibition",
+    "title": "Fine Arts Gallery Explores 'Digital Solitude' in Evocative Student Multimedia Show",
+    "subtitle": "Undergraduate sculptors, painters, and sound artists craft a haunting journey through online connectivity and modern loneliness.",
+    "category": "Culture",
+    "categorySlug": "culture",
+    "author": {
+      "name": "Elena Rostova",
+      "role": "Staff Writer",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 23, 2026",
+    "timestamp": 1761220800000,
+    "readTime": "4 min read",
+    "views": 1100,
+    "likes": 87,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Visitors interacting with the glowing fiber-optic installation 'Tethered Silence' by seniors Zoe Chen and Liam O'Connor.",
+    "tags": ["Fine Arts", "Exhibition", "Multimedia", "Sculpture"],
+    "summary": "The Fine Arts Department's fall showcase, 'Echoes of the Screen', probes the paradox of hyper-connected isolation through interactive glass sculptures and generative ambient soundscapes.",
+    "content": [
+      "<p class=\"lead\">In an era where every moment is livestreamed, tweeted, and archived to algorithmic feeds, the student artists of Planet University's Department of Fine Arts have paused to ask: what happens to the quiet corners of the human psyche?</p>",
+      "<p>Their answer is currently on display at the University Memorial Art Gallery in a sensory exhibition entitled 'Echoes of the Screen'. Featuring twenty-two multimedia installations created by senior fine arts and interactive design majors, the show invites visitors to disconnect and reflect on emotional presence.</p>",
+      "<blockquote>\"We spend nine hours a day staring into luminous glass rectangles. This exhibition aims to turn that glass inside out, illuminating the subtle grief and unexpected intimacy that live within our notifications.\"<cite>— Zoe Chen, Senior Sculptor</cite></blockquote>",
+      "<h3>Interactive Installations</h3>",
+      "<p>One standout piece, titled 'Tethered Silence', consists of a weeping willow structure crafted from illuminated optic filaments that pulse gently in response to ambient gallery foot traffic. Another room, designed by sound artist Liam O'Connor, plays dynamic micro-tones that soften only when museum guests sit still and remain completely silent together.</p>",
+      "<p>The exhibition runs through November 20th with free admission for all students and faculty.</p>"
+    ]
+  },
+  {
+    "id": "badminton-doubles-national-bid",
+    "title": "Women's Badminton Power Duo Advances to All-American Collegiate Finals",
+    "subtitle": "Unseeded sophomores Priya Nair and Chloe Bennett topple the reigning tournament champions in straight sets.",
+    "category": "Sports",
+    "categorySlug": "sports",
+    "author": {
+      "name": "Leo Gallagher",
+      "role": "Varsity Sports Lead",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 22, 2026",
+    "timestamp": 1761134400000,
+    "readTime": "4 min read",
+    "views": 1330,
+    "likes": 98,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Nair and Bennett executing their signature defensive rotation during the semifinal match.",
+    "tags": ["Badminton", "All-American", "Athletics", "Women in Sports"],
+    "summary": "Defying pre-tournament predictions, Planet University's women's badminton pair stormed into the national title matchup following a clinical semifinal display at the regional sports complex.",
+    "content": [
+      "<p class=\"lead\">In a stunning upset that reverberated across collegiate athletics, Planet University sophomores Priya Nair and Chloe Bennett defeated top-seeded Pacific Coast University in straight sets (21-17, 21-19) on Saturday afternoon to secure their ticket to the National Badminton Finals.</p>",
+      "<p>Entering the regional bracket as unseeded wildcards, Nair and Bennett deployed aggressive baseline smashes coupled with relentless drop-shot defense. Their synchronicity on court bewildered their opponents, who had previously gone undefeated for seventeen consecutive tournament matches.</p>",
+      "<blockquote>\"We practiced our cross-court defensive switches at 6 AM every day before organic chemistry lectures. When you put in those invisible hours together, you know exactly where your partner is going to be without looking.\"<cite>— Priya Nair, Sophomore Engineering Major</cite></blockquote>",
+      "<h3>Eyes on the National Crown</h3>",
+      "<p>Head Coach Karen Holt praised the duo's composure under pressure: 'Priya and Chloe have an innate tactical maturity that belies their age. Even when trailing by four points in the second set, their body language was unshakable.' The national championship match takes place in Atlanta next month, broadcast live on the Collegiate Sports Network.</p>"
+    ]
+  },
+  {
+    "id": "solar-microgrid-canopy",
+    "title": "Science Quad Solar Microgrid Canopy Generates 45% of Engineering Complex Power",
+    "subtitle": "Bifacial photovoltaic panels installed atop campus walkways double as rain shelters while dramatically slashing the university utility bill.",
+    "category": "Technology",
+    "categorySlug": "technology",
+    "author": {
+      "name": "Julian Thorne",
+      "role": "Investigative Editor",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 21, 2026",
+    "timestamp": 1761048000000,
+    "readTime": "4 min read",
+    "views": 1250,
+    "likes": 82,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "The newly completed architectural solar walkway connecting Hall of Science to the Engineering Quad.",
+    "tags": ["Clean Energy", "Solar Canopy", "Sustainability", "Green Campus"],
+    "summary": "Planet University's latest carbon neutrality milestone went live this week with an innovative solar microgrid that blankets primary outdoor walkways with clean-energy harvesting glass.",
+    "content": [
+      "<p class=\"lead\">Walking between the Hall of Science and the Engineering Complex just got significantly drier and vastly more sustainable. Planet University has officially commissioned its landmark Solar Canopy Walkway, an architectural solar installation delivering 1.2 megawatts of peak renewable energy.</p>",
+      "<p>The structure utilizes advanced bifacial photovoltaic glass modules that capture both direct sunlight from above and reflected albedo light bouncing off light-colored concrete pavers below, boosting energy yield by up to 22% compared to conventional rooftop setups.</p>",
+      "<blockquote>\"This isn't an isolated green showcase tucked away out of sight; students walk beneath this clean powerplant every single day between classes. It turns campus infrastructure into an educational teaching tool.\"<cite>— Dr. Rebecca Harmon, Director of Sustainability</cite></blockquote>",
+      "<h3>Real-Time Energy Dashboards</h3>",
+      "<p>Power generated by the canopy feeds into a 2-megawatt-hour battery storage bank housed in the engineering basement, supplying 45% of the power consumed by surrounding laboratories. Real-time consumption and carbon offset telemetry is broadcast to public touchscreen dashboards installed along the colonnade for students to inspect.</p>"
+    ]
+  },
+  {
+    "id": "library-quiet-sanctuary-pods",
+    "title": "Underwood Memorial Library Unveils Acoustic Soundproof Pods for 24/7 Deep Study",
+    "subtitle": "The twenty biometric pods provide silent micro-environments with ergonomic seating, white-noise regulators, and wireless charging.",
+    "category": "Campus News",
+    "categorySlug": "campus-news",
+    "author": {
+      "name": "Elena Rostova",
+      "role": "Staff Writer",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 23, 2026",
+    "timestamp": 1761220800000,
+    "readTime": "3 min read",
+    "views": 980,
+    "likes": 64,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "The newly installed acoustic pods situated in the third-floor west gallery of Underwood Memorial Library.",
+    "tags": ["Library", "Deep Study", "Mental Health", "Campus Facilities"],
+    "summary": "Designed to alleviate study space crunches and acoustic distractions, Underwood Library has deployed 20 modular privacy chambers featuring active sound isolation.",
+    "content": [
+      "<p class=\"lead\">Finding an undisturbed sanctuary during midterms just became easier for Planet University students. On Thursday, Underwood Memorial Library opened twenty newly installed acoustic 'Study Pods' across its third-floor reading commons.</p>",
+      "<p>Engineered with triple-glazed laminated acoustic glass and recycled felt interior panels, each pod achieves a 38-decibel sound attenuation rating, muting external whisperings, keyboard chatter, and hallway footsteps entirely.</p>",
+      "<blockquote>\"When you are preparing for medical licensing tests or memorizing complex theorems, even low background buzz fractures your train of thought. Stepping into one of these pods feels like entering a sensory oasis.\"<cite>— Marcus Wu, Senior Pre-Med Scholar</cite></blockquote>",
+      "<h3>Smart Reservation Rules</h3>",
+      "<p>To guarantee equitable access, pods can be booked for maximum three-hour increments via the campus library app using a student ID. Internal sensors detect occupancy and automatically release vacant booths after ten minutes of inactivity, ensuring no pod sits empty during peak evening study crunches.</p>"
+    ]
+  },
+  {
+    "id": "farm-to-table-dining-revamp",
+    "title": "Central Dining Hall Transitions to 100% Regional Farm-to-Table Seasonal Menu",
+    "subtitle": "University dining services partners with eighteen local organic farms to reduce carbon footprint and elevate campus nutrition.",
+    "category": "Campus News",
+    "categorySlug": "campus-news",
+    "author": {
+      "name": "Samira Patel",
+      "role": "Campus Life Editor",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 20, 2026",
+    "timestamp": 1760961600000,
+    "readTime": "4 min read",
+    "views": 1120,
+    "likes": 95,
+    "featured": false,
+    "editorsPick": true,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Fresh autumn harvests arriving at the Central Dining loading dock from Pleasant Valley Organic Co-op.",
+    "tags": ["Dining", "Organic", "Sustainability", "Campus Food"],
+    "summary": "Say goodbye to bland mystery meat. Planet University's culinary directors have completely overhauled dining contracts, sourcing produce and dairy exclusively from within 75 miles.",
+    "content": [
+      "<p class=\"lead\">Beginning this Monday, students entering Central Dining Hall were met with an unexpected culinary upgrade: roasted butternut squash risotto, heirloom tomato flatbreads, and freshly pressed cider made with apples picked forty-eight hours prior at an orchard thirty miles up the river.</p>",
+      "<p>The transformation is the result of a multi-year effort led by the Student Food Advisory Board and Executive Chef Antoine Mercier, who renegotiated the university's wholesale food distribution agreements to support local family agriculture.</p>",
+      "<blockquote>\"Nutritious, sustainably grown food should be a baseline entitlement for every student living away from home, not a luxury reserved for boutique bistros off campus.\"<cite>— Antoine Mercier, Executive Chef</cite></blockquote>",
+      "<h3>Zero Food Waste Initiative</h3>",
+      "<p>Alongside the fresh menu, dining services installed industrial composting digesters behind the dish returns. Food scraps that previously ended up in landfills will now be converted into high-grade organic fertilizer used across campus botanical gardens and the student agricultural greenhouse.</p>"
+    ]
+  },
+  {
+    "id": "track-star-record-800m",
+    "title": "Junior Sprints Phenom Shatters 12-Year Campus 800m Record at Twilight Invitational",
+    "subtitle": "Devon Reed crosses the finish line in 1:46.12, qualifying automatically for the national athletic championship trials.",
+    "category": "Sports",
+    "categorySlug": "sports",
+    "author": {
+      "name": "Elena Rostova",
+      "role": "Staff Writer",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 19, 2026",
+    "timestamp": 1760875200000,
+    "readTime": "3 min read",
+    "views": 1620,
+    "likes": 145,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Devon Reed bursting into the final straightaway under the stadium floodlights.",
+    "tags": ["Track and Field", "Campus Record", "Athletics", "Running"],
+    "summary": "In an exhilarating display of middle-distance pace strategy, junior standout Devon Reed etched his name into the university athletic annals with a historic 800m lap split.",
+    "content": [
+      "<p class=\"lead\">The stopwatches at the annual Twilight Invitational flashed an unbelievable number Saturday night: 1 minute, 46 seconds, and 12 milliseconds. Junior varsity runner Devon Reed had not just won the men's 800-meter final—he had erased a collegiate record that had stood untouched since 2014.</p>",
+      "<p>Positioning himself behind the pacesetter through a blisteringly fast 51.4-second opening lap, Reed kicked on the outer bend at 600 meters, separating himself from the pack by five clear strides before crossing the line with arms aloft.</p>",
+      "<blockquote>\"When I hit the 200-meter turn, I heard the whole student dugout banging on the aluminum boards. My legs were burning, but their energy just carried me through the home stretch.\"<cite>— Devon Reed, Varsity Track & Field</cite></blockquote>",
+      "<p>With this performance, Reed secures automatic entry to the Olympic development trials scheduled for late summer in Oregon. Athletic Director Sarah Jenkins confirmed that Reed will be commemorated at the upcoming hall of fame ceremonies.</p>"
+    ]
+  },
+  {
+    "id": "cyber-defense-rover-vulnerability",
+    "title": "Student Cybersecurity Society Discovers Zero-Day in Autonomous Rover Simulator",
+    "subtitle": "White-hat researchers received responsible disclosure accolades from aerospace vendors after patching telemetry buffer exploits.",
+    "category": "Technology",
+    "categorySlug": "technology",
+    "author": {
+      "name": "Dr. Aris Vance",
+      "role": "Science & Tech Correspondent",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 18, 2026",
+    "timestamp": 1760788800000,
+    "readTime": "4 min read",
+    "views": 1410,
+    "likes": 110,
+    "featured": false,
+    "editorsPick": true,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Terminal logs and hardware interface used by the student defense team to trace signal vulnerabilities.",
+    "tags": ["Cybersecurity", "White Hat", "Robotics", "Software Security"],
+    "summary": "Three members of Planet University's Cyber Defense League were awarded $20,000 in bug bounty honors after discovering an unpatched packet vulnerability in widely used space simulation software.",
+    "content": [
+      "<p class=\"lead\">A routine weekend penetration testing lab turned into an international security advisory when three undergraduate members of the Planet University Cyber Defense League identified a critical buffer overflow vulnerability within commercial telemetry packages used by aerospace simulators.</p>",
+      "<p>The vulnerability—now designated CVE-2026-44910—allowed unauthorized remote execution by sending malformed sensor packets over unencrypted serial ports, potentially giving malicious actors control over robotic rover steering subsystems.</p>",
+      "<blockquote>\"Our goal as student white-hats is to stress-test systems before vulnerable hardware is deployed into real-world mission environments. Responsible disclosure protects lives and equipment.\"<cite>— Nathan Kim, Cyber Club President</cite></blockquote>",
+      "<p>The vendor validated the finding within 36 hours and pushed an emergency firmware patch to over 40 global research institutions. The student researchers were commended by the National Cybersecurity Directorate and invited to present their methodology at DefCon next August.</p>"
+    ]
+  },
+  {
+    "id": "vintage-cinema-film-society",
+    "title": "Campus Film Society Launches 35mm Celluloid Retrospective in Historic Chapel Theater",
+    "subtitle": "Weekly curated screenings of French New Wave and classic neo-noir cinema draw cinephiles and curious novices alike.",
+    "category": "Culture",
+    "categorySlug": "culture",
+    "author": {
+      "name": "Samira Patel",
+      "role": "Campus Life Editor",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 17, 2026",
+    "timestamp": 1760702400000,
+    "readTime": "4 min read",
+    "views": 950,
+    "likes": 76,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Original 35mm projector running archival reels in the renovated projection booth of Chapel Theater.",
+    "tags": ["Cinema", "Film Society", "Celluloid", "Arts"],
+    "summary": "In an era of compressed streaming algorithms, the Planet Film Society has revived physical film stock with a vintage projector restoration inside the gothic Chapel Theater.",
+    "content": [
+      "<p class=\"lead\">The unmistakable rhythmic clatter of a mechanical film projector and the warm flicker of xenon lamp illumination returned to campus on Friday night as the Planet University Film Society launched its 'Masters of Light: 35mm Celluloid Series'.</p>",
+      "<p>Over two hundred students packed the vintage wooden pews of the renovated Chapel Theater for an archival print screening of Jean-Luc Godard's 'Breathless', followed by a lively post-film debate led by film theory faculty and student directors.</p>",
+      "<blockquote>\"Streaming video is hyper-convenient, but watching a genuine celluloid reel unspool at 24 frames per second with genuine film grain is a tactile, communal encounter that digital monitors can never replicate.\"<cite>— Maya Soren, President of Film Society</cite></blockquote>",
+      "<p>Screenings are scheduled every Friday at 8:00 PM throughout the semester, featuring restored prints loaned from the State Film Archive. Admission is free with student ID, complete with organic buttered popcorn provided by the campus cooperative.</p>"
+    ]
+  },
+  {
+    "id": "intramural-sports-gala",
+    "title": "Annual Intramural Sports Gala Celebrates 400 Student Athletes and Community MVPs",
+    "subtitle": "Dormitory volleyball leagues, ultimate frisbee champions, and club coaches gathered in the Great Hall for the yearly banquet.",
+    "category": "Sports",
+    "categorySlug": "sports",
+    "author": {
+      "name": "Leo Gallagher",
+      "role": "Varsity Sports Lead",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 15, 2026",
+    "timestamp": 1760529600000,
+    "readTime": "3 min read",
+    "views": 840,
+    "likes": 52,
+    "featured": false,
+    "editorsPick": false,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Captains and team representatives raising the intramural trophy at the closing banquet.",
+    "tags": ["Intramural", "Athletics", "Student Life", "Community"],
+    "summary": "Celebrating friendship, fair play, and healthy competition, the university's 42 intramural leagues gathered for their annual recognition dinner inside the Great Hall.",
+    "content": [
+      "<p class=\"lead\">While varsity athletics often capture stadium headlines, the heartbeat of campus recreation was on full display Thursday night during the 34th Annual Intramural Sports Gala held in the historic Great Hall.</p>",
+      "<p>Over four hundred students, representing thirty-six co-ed volleyball squads, twenty-four touch rugby clubs, and forty intramural basketball divisions, donned formal wear to celebrate sportsmanship and community camaraderie.</p>",
+      "<blockquote>\"Intramural sports aren't about professional contracts; they're about blowing off steam with your dorm hallmates after a grueling chemistry midterm and sharing pizza win or lose.\"<cite>— Carlos Mendoza, Senior Recreation Director</cite></blockquote>",
+      "<p>The coveted 'House Cup for Recreational Spirit' went to South Tower Residence for maintaining a 99% match attendance across twelve sporting seasons. Registration for spring semester leagues opens on the student portal November 1st.</p>"
+    ]
+  },
+  {
+    "id": "battle-of-the-bands-amphitheater",
+    "title": "Underground Indie Outfit 'Velvet Echo' Sweeps Annual Battle of the Bands",
+    "subtitle": "Ten campus bands competed in front of industry alumni judges, with dynamic guitar riffs and poetic lyricism taking the top prize.",
+    "category": "Culture",
+    "categorySlug": "culture",
+    "author": {
+      "name": "Julian Thorne",
+      "role": "Investigative Editor",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+    },
+    "date": "October 14, 2026",
+    "timestamp": 1760443200000,
+    "readTime": "4 min read",
+    "views": 1780,
+    "likes": 138,
+    "featured": false,
+    "editorsPick": true,
+    "trending": false,
+    "breaking": false,
+    "image": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+    "imageCaption": "Velvet Echo lead vocalist performing during the climactic encore at the Greek Amphitheater.",
+    "tags": ["Music", "Battle of the Bands", "Indie Rock", "Campus Culture"],
+    "summary": "Ten stellar student ensembles battled through four hours of live rock, funk, and dream-pop at the Greek Amphitheater before Velvet Echo captured the recording contract prize.",
+    "content": [
+      "<p class=\"lead\">Feedback echoed across the limestone pillars of the university amphitheater as ten student bands put on an explosive showcase of campus musical talent during the 2026 Battle of the Bands finals on Friday night.</p>",
+      "<p>Taking top honors was four-piece alternative rock quartet 'Velvet Echo', formed by junior literature majors and music production students. Their twenty-minute set, distinguished by intricate guitar looping, hypnotic drum polyrhythms, and poignant vocals, earned unanimous standing ovations from both student judges and visiting alumni producers.</p>",
+      "<blockquote>\"We wrote these songs in the basement practice room of Franklin Hall late at night when the snow was piling up outside. Playing them to a packed amphitheater screaming the chorus back at us was pure magic.\"<cite>— Sienna Blake, Lead Singer</cite></blockquote>",
+      "<p>As champions, Velvet Echo will record a four-track studio EP fully funded by the university student arts foundation and receive an automatic opening slot at the upcoming Spring Commencement Music Festival.</p>"
+    ]
+  }
+];
+
+// In-memory cache
+let cachedArticles = null;
+
+/**
+ * Resolves the relative path to data/articles.json based on current page path
+ */
+function getDataUrl() {
+  const isPageSubdir = window.location.pathname.includes('/pages/') || 
+                       window.location.pathname.includes('\\pages\\');
+  return isPageSubdir ? '../data/articles.json' : 'data/articles.json';
+}
+
+/**
+ * Loads all articles from data/articles.json, with automatic fallback
+ * @returns {Promise<Array>} List of article objects
+ */
+async function getArticles() {
+  if (cachedArticles) {
+    return cachedArticles;
+  }
+
+  try {
+    const url = getDataUrl();
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+    const data = await response.json();
+    cachedArticles = data;
+    return cachedArticles;
+  } catch (err) {
+    // Graceful fallback for file:// protocol or offline browsing
+    console.info('Loaded Daily Planet news articles from embedded data source.');
+    cachedArticles = FALLBACK_ARTICLES;
+    return cachedArticles;
+  }
+}
+
+/**
+ * Get an article by its slug ID
+ */
+async function getArticleById(id) {
+  const articles = await getArticles();
+  return articles.find(a => a.id === id) || null;
+}
+
+/**
+ * Get articles for a given category slug
+ */
+async function getArticlesByCategory(categorySlug) {
+  const articles = await getArticles();
+  if (!categorySlug || categorySlug === 'all') return articles;
+  return articles.filter(a => a.categorySlug.toLowerCase() === categorySlug.toLowerCase());
+}
+
+/**
+ * Get breaking news stories for the ticker
+ */
+async function getBreakingArticles() {
+  const articles = await getArticles();
+  return articles.filter(a => a.breaking);
+}
+
+/**
+ * Get the main featured hero article
+ */
+async function getFeaturedArticle() {
+  const articles = await getArticles();
+  return articles.find(a => a.featured) || articles[0];
+}
+
+/**
+ * Get trending stories ranked 1-5
+ */
+async function getTrendingArticles() {
+  const articles = await getArticles();
+  return articles
+    .filter(a => a.trending)
+    .sort((a, b) => (a.trendingRank || 99) - (b.trendingRank || 99));
+}
+
+/**
+ * Get Editor's picks
+ */
+async function getEditorsPicks() {
+  const articles = await getArticles();
+  return articles.filter(a => a.editorsPick);
+}
+
+/**
+ * Search articles across titles, summaries, tags, and authors
+ */
+async function searchArticles(query) {
+  if (!query || !query.trim()) return [];
+  const q = query.toLowerCase().trim();
+  const articles = await getArticles();
+  return articles.filter(a => {
+    return (
+      a.title.toLowerCase().includes(q) ||
+      a.subtitle.toLowerCase().includes(q) ||
+      a.summary.toLowerCase().includes(q) ||
+      a.category.toLowerCase().includes(q) ||
+      a.author.name.toLowerCase().includes(q) ||
+      (a.tags && a.tags.some(tag => tag.toLowerCase().includes(q)))
+    );
+  });
+}
+
+// -------------------------------------------------------------
+// LOCALSTORAGE HELPERS: Bookmarks, Likes, Comments, Newsletter
+// -------------------------------------------------------------
+
+const STORAGE_KEYS = {
+  BOOKMARKS: 'daily_planet_bookmarks',
+  LIKES: 'daily_planet_likes',
+  COMMENTS: 'daily_planet_comments',
+  NEWSLETTER: 'daily_planet_newsletter',
+  THEME: 'daily_planet_theme'
+};
+
+function getSavedBookmarks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.BOOKMARKS);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function isArticleSaved(id) {
+  const list = getSavedBookmarks();
+  return list.includes(id);
+}
+
+function toggleBookmark(id) {
+  const list = getSavedBookmarks();
+  const index = list.indexOf(id);
+  let saved = false;
+  if (index === -1) {
+    list.push(id);
+    saved = true;
+  } else {
+    list.splice(index, 1);
+    saved = false;
+  }
+  localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(list));
+  window.dispatchEvent(new CustomEvent('bookmarksUpdated', { detail: { id, saved, count: list.length } }));
+  return saved;
+}
+
+function removeBookmark(id) {
+  const list = getSavedBookmarks().filter(item => item !== id);
+  localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(list));
+  window.dispatchEvent(new CustomEvent('bookmarksUpdated', { detail: { id, saved: false, count: list.length } }));
+}
+
+function clearAllBookmarks() {
+  localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify([]));
+  window.dispatchEvent(new CustomEvent('bookmarksUpdated', { detail: { count: 0 } }));
+}
+
+// Likes Management
+function getArticleLikes(id, defaultCount = 0) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.LIKES);
+    const store = raw ? JSON.parse(raw) : {};
+    return store[id] || { count: defaultCount, userLiked: false };
+  } catch (e) {
+    return { count: defaultCount, userLiked: false };
+  }
+}
+
+function toggleArticleLike(id, defaultCount = 0) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.LIKES);
+    const store = raw ? JSON.parse(raw) : {};
+    const item = store[id] || { count: defaultCount, userLiked: false };
+
+    if (item.userLiked) {
+      item.count = Math.max(0, item.count - 1);
+      item.userLiked = false;
+    } else {
+      item.count = item.count + 1;
+      item.userLiked = true;
+    }
+
+    store[id] = item;
+    localStorage.setItem(STORAGE_KEYS.LIKES, JSON.stringify(store));
+    return item;
+  } catch (e) {
+    return { count: defaultCount + 1, userLiked: true };
+  }
+}
+
+// Seed initial realistic comments for articles
+const DEFAULT_COMMENTS = {
+  "turing-hall-quantum-ai-lab": [
+    {
+      "id": "c1",
+      "author": "Maya S. (Junior, ECE)",
+      "time": "Yesterday at 4:15 PM",
+      "text": "Tested the motion-capture bay during early access induction! The sensor latency is under 3ms. Can't wait to run our quadcopter tests."
+    },
+    {
+      "id": "c2",
+      "author": "Dr. Henderson (Ethics Dept)",
+      "time": "2 days ago",
+      "text": "Glad to see the ethics advisory board mandated from day one. Responsible autonomous computing starts in undergraduate labs."
+    }
+  ],
+  "hostel-wifi-6e-upgrade": [
+    {
+      "id": "c3",
+      "author": "Kevin P. (Mercer Hall, 3rd Floor)",
+      "time": "3 hours ago",
+      "text": "Confirming 820 Mbps down in Hawthorne lounge right now! Finally don't have to walk to the engineering library in the freezing rain to download lab files."
+    }
+  ],
+  "inter-college-football-championship": [
+    {
+      "id": "c4",
+      "author": "Sarah Jenkins (Sports Fanatic)",
+      "time": "Yesterday at 11:30 PM",
+      "text": "Marcus Cole's curling free kick will be remembered for decades. Northfield Stadium was shaking!"
+    }
+  ]
+};
+
+function getArticleComments(id) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.COMMENTS);
+    const store = raw ? JSON.parse(raw) : {};
+    const storedList = store[id] || [];
+    const seed = DEFAULT_COMMENTS[id] || [
+      {
+        "id": "seed-1",
+        "author": "Campus Observer",
+        "time": "1 day ago",
+        "text": "Great reporting by the Daily Planet staff. Looking forward to follow-up developments on this."
+      }
+    ];
+    return [...seed, ...storedList];
+  } catch (e) {
+    return DEFAULT_COMMENTS[id] || [];
+  }
+}
+
+function addArticleComment(id, author, role, text) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.COMMENTS);
+    const store = raw ? JSON.parse(raw) : {};
+    const list = store[id] || [];
+
+    const now = new Date();
+    const timeStr = "Just now";
+
+    const newComment = {
+      id: "c-" + Date.now(),
+      author: role ? `${author} (${role})` : author,
+      time: timeStr,
+      text: text.trim()
+    };
+
+    list.push(newComment);
+    store[id] = list;
+    localStorage.setItem(STORAGE_KEYS.COMMENTS, JSON.stringify(store));
+    return newComment;
+  } catch (e) {
+    console.error('Failed to save comment', e);
+    return null;
+  }
+}
+
+// Expose on window for vanilla JS multi-page usage
+window.DailyPlanet = {
+  getArticles,
+  getArticleById,
+  getArticlesByCategory,
+  getBreakingArticles,
+  getFeaturedArticle,
+  getTrendingArticles,
+  getEditorsPicks,
+  searchArticles,
+  getSavedBookmarks,
+  isArticleSaved,
+  toggleBookmark,
+  removeBookmark,
+  clearAllBookmarks,
+  getArticleLikes,
+  toggleArticleLike,
+  getArticleComments,
+  addArticleComment,
+  FALLBACK_ARTICLES
+};
